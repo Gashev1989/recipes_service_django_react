@@ -1,0 +1,7 @@
+asgiref==3.6.0
+Django==3.2.16
+Pillow==9.5.0
+pytz==2023.3
+sorl-thumbnail==12.9.0
+sqlparse==0.4.4
+tzdata==2023.3
