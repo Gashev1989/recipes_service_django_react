@@ -1,11 +1,11 @@
 from django.contrib import admin
 
-from .models import Ingredient, Tag, Recipe
+from .models import Ingredient, Tag, Recipe, RecipeIngredient
 
 
 class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
-    list_display = ('name', 'unit_of_measure',)
+    list_display = ('name', 'measurement_unit',)
     search_fields = ('name',)
     list_filter = ('name', )
 
@@ -23,6 +23,12 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('author', 'name', 'tag',)
 
 
+class RecipeIngredientAdmin(admin.ModelAdmin):
+    empty_value_display = '-пусто-'
+    list_display = ('recipe', 'ingredient', 'amount', 'measurment_unit',)
+
+
 admin.site.register(Ingredient, IngredientAdmin)
 admin.site.register(Tag, TagAdmin)
-admin.site.register(Recipe,RecipeAdmin)
+admin.site.register(Recipe, RecipeAdmin)
+admin.site.register(RecipeIngredient, RecipeIngredientAdmin)
