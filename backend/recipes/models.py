@@ -21,6 +21,7 @@ class Tag(models.Model):
     """Модель тега."""
     name = models.CharField(verbose_name='Название тега', max_length=100, unique=True)
     slug = models.SlugField(verbose_name='Slug тега', unique=True)
+    color = models.CharField(verbose_name='Цвет тега', max_length=16)
 
     class Meta:
         unique_together = ('name', 'slug')
