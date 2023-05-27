@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -26,16 +27,12 @@ class User(AbstractUser):
         verbose_name='Пароль',
         max_length=150
     )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('username', 'first_name', 'last_name')
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        constraints = [
-            models.CheckConstraint(
-                check=~models.Q(username__exact='me'),
-                name="username shouldn't be 'me'"
-            )
-        ]
 
     def __str__(self):
         return self.username
@@ -61,7 +58,10 @@ class Follow(models.Model):
     )
 
     class Meta:
-        unique_together = ('user', 'author')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'author'], name='unique_user_author')
+                ]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
 
