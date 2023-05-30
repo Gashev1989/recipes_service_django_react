@@ -4,16 +4,21 @@ from .models import (FavoriteRecipe, Ingredient, Recipe, RecipeIngredient,
                      ShoppingRecipe, Tag)
 
 
+class RecipeIngredientInline(admin.TabularInline):
+    model = RecipeIngredient
+    extra = 1
+
+
 class IngredientAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
-    list_display = ('name', 'measurement_unit',)
+    list_display = ('name', 'measurement_unit')
     search_fields = ('name',)
     list_filter = ('name', )
 
 
 class TagAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
-    list_display = ('name', 'slug',)
+    list_display = ('name', 'slug')
     search_fields = ('name', 'slug',)
 
 
@@ -22,6 +27,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'in_favorite')
     search_fields = ('name',)
     list_filter = ('author', 'name', 'tags',)
+    inlines = [RecipeIngredientInline]
 
     def in_favorite(self, obj):
         return obj.favorite_recipe.count()
@@ -29,7 +35,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
 class RecipeIngredientAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
-    list_display = ('recipe', 'ingredient', 'amount',)
+    list_display = ('recipe', 'ingredient', 'amount')
 
 
 admin.site.register(Ingredient, IngredientAdmin)

@@ -131,7 +131,9 @@ class RecipeSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_card = serializers.SerializerMethodField()
     image = Base64ImageField(required=True, allow_null=False)
-    ingredients = RecipeIngredientSerializer(many=True)
+    ingredients = RecipeIngredientSerializer(
+        many=True, source='recipeingredient_set'
+    )
 
     class Meta:
         model = Recipe

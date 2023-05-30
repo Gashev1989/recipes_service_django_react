@@ -8,8 +8,7 @@ class Ingredient(models.Model):
     """Модель ингредиента."""
     name = models.CharField(
         verbose_name='Название ингредиента',
-        max_length=100,
-        unique=True
+        max_length=100
     )
     measurement_unit = models.CharField(
         verbose_name='Единица измерения',
@@ -17,6 +16,11 @@ class Ingredient(models.Model):
     )
 
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name', 'measurement_unit'],
+                name='unique_name_measurement_unit')
+                ]
         ordering = ('name',)
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
@@ -126,10 +130,10 @@ class RecipeIngredient(models.Model):
         verbose_name_plural = 'Ингредиенты в рецептах'
     
     def __str__(self):
-        return (self.recipe,
-                self.ingredient,
-                self.amount,
-                self.ingredient.measurement_unit)
+        return (f'{self.recipe.name}: '
+                f'{self.ingredient.name} - '
+                f'{self.amount} '
+                f'{self.ingredient.measurement_unit}')
 
 
 class FavoriteRecipe(models.Model):
@@ -154,7 +158,7 @@ class FavoriteRecipe(models.Model):
         verbose_name_plural = 'Избранные рецепты'
 
     def __str__(self):
-        return (self.recipe.name, self.user)
+        return f'{self.recipe.name} - {self.user}'
 
 
 class ShoppingRecipe(models.Model):
@@ -179,4 +183,4 @@ class ShoppingRecipe(models.Model):
         verbose_name_plural = 'Рецепты в корзине'
     
     def __str__(self):
-        return (self.recipe.name, self.user)
+        return f'{self.recipe.name} - {self.user}'
