@@ -3,7 +3,7 @@
 На этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
 ### Адрес
-Проект развернут по адресу: 
+Проект планируется к публикации в интернете.
 
 ### Технологии
 Python 3.9
@@ -14,7 +14,7 @@ PostgreSQL
 Gunicorn
 Nginx
 
-### Запуск проекта
+### Запуск проекта локально.
 1. Клонировать репозиторий и перейти в него в командной строке:
 
 ```
@@ -45,9 +45,9 @@ SECRET_KEY='секретный ключ проекта'
 
 ```
 docker-compose up -d --build
-docker-compose exec web python manage.py migrate
-docker-compose exec web python manage.py createsuperuser
-docker-compose exec web python manage.py collectstatic --no-input
+docker-compose exec backend python manage.py migrate
+docker-compose exec backend python manage.py createsuperuser
+docker-compose exec backend python manage.py collectstatic --no-input
 ```
 4. Заполнить базу данных ингридиентами рецептов:
 
@@ -58,9 +58,14 @@ docker-compose exec backend python manage.py load_data
 5. Открыть документацию проекта:
 
 ```
- 
+http://127.0.0.1/api/docs/
+```
+
+6. Через админку Django создать необходимые теги.
+```
+http://127.0.0.1/admin/
 ```
 ***
 
-### Авторы
+### Автор
 Гашев Константин

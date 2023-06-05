@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -38,14 +37,14 @@ class User(AbstractUser):
         return self.username
 
 
-class Follow(models.Model):
+class Subscribe(models.Model):
     """Модель подписки."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        related_name='follower',
+        related_name='subscriber',
         verbose_name='Подписчик'
     )
     author = models.ForeignKey(
@@ -53,15 +52,14 @@ class Follow(models.Model):
         on_delete=models.CASCADE,
         null=False,
         blank=False,
-        related_name='following',
+        related_name='subscribing',
         verbose_name='Автор рецепта'
     )
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'author'], name='unique_user_author')
-                ]
+                fields=['user', 'author'], name='unique_subscribe')]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
 
