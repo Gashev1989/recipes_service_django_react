@@ -18,6 +18,7 @@ jobs:
         # обновление pip
         python -m pip install --upgrade pip
         pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
+        cd backend
         pip install -r backend/requirements.txt
     - name: Test with flake8
       run: |
