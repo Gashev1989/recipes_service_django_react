@@ -3,8 +3,6 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
-from recipes.models import (Component, FavoriteRecipe, Ingredient, Recipe,
-                            ShoppingCart, Tag)
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import (SAFE_METHODS, AllowAny,
@@ -12,6 +10,9 @@ from rest_framework.permissions import (SAFE_METHODS, AllowAny,
                                         IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+
+from recipes.models import (Component, FavoriteRecipe, Ingredient, Recipe,
+                            ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 from .filters import RecipeFilter
@@ -64,12 +65,7 @@ class RecipeViewSet(ModelViewSet):
             'user': user.id,
             'recipe': recipe.id,
         }, context={'request': request})
-
-        try:
-            serializer.is_valid(raise_exception=True)
-        except serializer.ValidationError as e:
-            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
-
+        serializer.is_valid(raise_exception=True)
         if model.objects.filter(user=user, recipe=recipe).exists():
             return Response(
                 {'errors': error_message},
@@ -82,12 +78,13 @@ class RecipeViewSet(ModelViewSet):
             self, recipe=None, user=None, model=None,
             error_message=None):
         """Обработчик DELETE-запросов."""
-        if not model.objects.filter(user=user, recipe=recipe).exists():
+        obj = model.objects.filter(user=user, recipe=recipe)
+        if not obj.exists():
             return Response(
                 {'errors': error_message},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        model.objects.get(user=user, recipe=recipe).delete()
+        obj.delete()
         return Response(
             {'message': 'Рецепт успешно удален.'},
             status=status.HTTP_204_NO_CONTENT
