@@ -34,7 +34,7 @@ class UserSerializer(UserSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         if user.is_authenticated:
-            return user.subscriber.exists()
+            return obj.subscriber.filter(user=user).exists()
         return False
 
     def create(self, validated_data):
@@ -148,13 +148,13 @@ class RecipeSerializer(serializers.ModelSerializer):
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
         if user.is_authenticated:
-            return user.favorite.exists()
+            return obj.favorite.filter(user=user).exists()
         return False
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
         if user.is_authenticated:
-            return user.shop_cart.exists()
+            return obj.shop_cart.filter(user=user).exists()
         return False
 
 
@@ -255,7 +255,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get("request").user
         if user.is_authenticated and user.username != obj.username:
-            return user.subscriber.exists()
+            return obj.subscriber.filter(user=user).exists()
         return False
 
     def get_recipes(self, obj):
