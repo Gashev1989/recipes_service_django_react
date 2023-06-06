@@ -250,7 +250,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get("request").user
         if user.is_authenticated and user.username != obj.username:
-            return Subscribe.objects.filter(user=user, author=obj).exists()
+            return user.subscriber.exists()
         return False
 
     def get_recipes(self, obj):
