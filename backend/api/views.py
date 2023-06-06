@@ -58,19 +58,14 @@ class RecipeViewSet(ModelViewSet):
         return RecipeCreateUpdateSerializer
 
     def _handler_post_request(
-            self, request=None, serializer=None, user=None,
-            model=None, error_message=None, recipe=None):
+            self, request=None, serializer=None,
+            user=None, recipe=None):
         """Обработчик POST-запросов."""
         serializer = serializer(data={
             'user': user.id,
             'recipe': recipe.id,
         }, context={'request': request})
         serializer.is_valid(raise_exception=True)
-#        if model.objects.filter(user=user, recipe=recipe).exists():
-#            return Response(
-#                {'errors': error_message},
-#                status=status.HTTP_400_BAD_REQUEST
-#            )
         serializer.save(user=user, recipe=recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -103,8 +98,6 @@ class RecipeViewSet(ModelViewSet):
                 request=request,
                 serializer=FavoriteRecipeSerializer,
                 user=user,
-                model=model,
-                error_message='Рецепт уже в избранном.',
                 recipe=recipe,
             )
 
@@ -130,8 +123,6 @@ class RecipeViewSet(ModelViewSet):
                 request=request,
                 serializer=ShoppingCartSerializer,
                 user=user,
-                model=model,
-                error_message='Рецепт уже в корзине покупок.',
                 recipe=recipe,
             )
 
@@ -196,11 +187,11 @@ class UsersViewSet(UserViewSet):
         subscription = Subscribe.objects.filter(user=user, author=author)
 
         if request.method == 'POST':
-            if subscription.exists():
-                return Response(
-                    {'error': 'Вы уже подписаны на этого автора.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+#            if subscription.exists():
+#                return Response(
+#                    {'error': 'Вы уже подписаны на этого автора.'},
+#                    status=status.HTTP_400_BAD_REQUEST
+#                )
             serializer = SubscribeSerializer(
                 author, context={'request': request}
             )
