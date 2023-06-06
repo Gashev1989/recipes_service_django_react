@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
+MINIMAL_VALUE = 1
+
 User = get_user_model()
 
 
@@ -53,6 +55,7 @@ class Tag(models.Model):
             models.UniqueConstraint(
                 fields=['name', 'slug', 'color'],
                 name='unique_name_slug_color')]
+        ordering = ('name',)
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
 
@@ -90,9 +93,9 @@ class Recipe(models.Model):
         verbose_name='Теги',
         related_name='recipes'
     )
-    cooking_time = models.PositiveIntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления в минутах',
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(MINIMAL_VALUE)]
     )
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
@@ -122,9 +125,9 @@ class Component(models.Model):
         verbose_name='Ингредиент',
         related_name='components'
     )
-    amount = models.PositiveIntegerField(
+    amount = models.PositiveSmallIntegerField(
         verbose_name='Количество ингредиента',
-        validators=[MinValueValidator(1)]
+        validators=[MinValueValidator(MINIMAL_VALUE)]
     )
 
     class Meta:
@@ -132,6 +135,7 @@ class Component(models.Model):
             models.UniqueConstraint(
                 fields=['ingredient', 'recipe'],
                 name='unique_component')]
+        ordering = ('recipe',)
         verbose_name = 'Ингредиенты в рецепте'
         verbose_name_plural = 'Ингредиенты в рецептах'
 
@@ -159,6 +163,7 @@ class FavoriteRecipe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'], name='unique_favorite_recipe')]
+        ordering = ('user',)
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
 
@@ -183,6 +188,7 @@ class ShoppingCart(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'], name='unique_shop_recipe')]
+        ordering = ('user',)
         verbose_name = 'Рецепт в корзине'
         verbose_name_plural = 'Рецепты в корзине'
 

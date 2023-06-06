@@ -110,11 +110,11 @@ class ComponentCreateSerializer(serializers.ModelSerializer):
             'id',
             'amount',
         )
-    
+
     def validate_amount(self, value):
         if 1 >= value <= 32000:
             raise serializers.ValidationError(
-                    'Значение количества должно быть от 1 до 32000.')
+                'Значение количества должно быть от 1 до 32000.')
         return value
 
 
