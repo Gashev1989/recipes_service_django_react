@@ -66,11 +66,11 @@ class RecipeViewSet(ModelViewSet):
             'recipe': recipe.id,
         }, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        if model.objects.filter(user=user, recipe=recipe).exists():
-            return Response(
-                {'errors': error_message},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+#        if model.objects.filter(user=user, recipe=recipe).exists():
+#            return Response(
+#                {'errors': error_message},
+#                status=status.HTTP_400_BAD_REQUEST
+#            )
         serializer.save(user=user, recipe=recipe)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
