@@ -2,9 +2,10 @@ import base64
 
 from django.core.files.base import ContentFile
 from djoser.serializers import UserSerializer
+from rest_framework import serializers
+
 from recipes.models import (Component, FavoriteRecipe, Ingredient, Recipe,
                             ShoppingCart, Tag)
-from rest_framework import serializers
 from users.models import Subscribe, User
 
 
@@ -28,7 +29,7 @@ class UserSerializer(UserSerializer):
     def get_is_subscribed(self, obj):
         user = self.context.get('request').user
         if user.is_authenticated:
-            return Subscribe.objects.filter(user=user, author=obj).exists()
+            return user.subscriber.exists()
         return False
 
     def create(self, validated_data):
@@ -108,6 +109,12 @@ class ComponentCreateSerializer(serializers.ModelSerializer):
             'id',
             'amount',
         )
+    
+    def validate_amount(self, value):
+        if 1 >= value <= 32000:
+            raise serializers.ValidationError(
+                    'Значение количества должно быть от 1 до 32000.')
+        return value
 
 
 class RecipeSerializer(serializers.ModelSerializer):
