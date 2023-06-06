@@ -230,7 +230,7 @@ class RecipeShortSerializer(serializers.ModelSerializer):
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
-    """Список авторов, на которых подписан пользователь."""
+    """Сериалайзер для авторов, на которых подписан пользователь."""
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
@@ -265,6 +265,27 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    """Сериалайзер для подписки/отписки от автора."""
+    class Meta:
+        model = Subscribe
+        fields = ('user', 'author')
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Subscribe.objects.all(),
+                fields=('user', 'author'),
+                message='Вы уже подписались на автора.'
+            )
+        ]
+
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        return SubscribeSerializer(
+            instance.author,
+            context={'request': request}
+        ).data
 
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):

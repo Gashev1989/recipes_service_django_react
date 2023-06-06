@@ -21,7 +21,8 @@ from .permissions import IsAdminIsAuthorOrReadOnly
 from .serializers import (FavoriteRecipeSerializer, IngredientSerializer,
                           RecipeCreateUpdateSerializer, RecipeSerializer,
                           ShoppingCartSerializer, SubscribeSerializer,
-                          TagSerializer, UserSerializer)
+                          SubscriptionSerializer, TagSerializer,
+                          UserSerializer)
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -187,15 +188,12 @@ class UsersViewSet(UserViewSet):
         subscription = Subscribe.objects.filter(user=user, author=author)
 
         if request.method == 'POST':
-#            if subscription.exists():
-#                return Response(
-#                    {'error': 'Вы уже подписаны на этого автора.'},
-#                    status=status.HTTP_400_BAD_REQUEST
-#                )
-            serializer = SubscribeSerializer(
-                author, context={'request': request}
-            )
-            Subscribe.objects.create(user=user, author=author)
+            serializer = SubscriptionSerializer(data={
+                'user': request.user.id,
+                'author': author.id
+            }, context={'request': request})
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == 'DELETE':
@@ -204,5 +202,5 @@ class UsersViewSet(UserViewSet):
                     {'error': 'Вы не подписывались на этого автора.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-        subscription.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            subscription.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
