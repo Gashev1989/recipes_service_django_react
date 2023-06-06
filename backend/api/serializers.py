@@ -10,6 +10,10 @@ from recipes.models import (Component, FavoriteRecipe, Ingredient, Recipe,
 from users.models import Subscribe, User
 
 
+MIN_VALUE = 1
+MAX_VALUE = 32000
+
+
 class UserSerializer(UserSerializer):
     """Сериалайзер для пользователя."""
     is_subscribed = serializers.SerializerMethodField()
@@ -112,7 +116,7 @@ class ComponentCreateSerializer(serializers.ModelSerializer):
         )
 
     def validate_amount(self, value):
-        if 1 >= value <= 32000:
+        if MIN_VALUE <= value >= MAX_VALUE:
             raise serializers.ValidationError(
                 'Значение количества должно быть от 1 до 32000.')
         return value
