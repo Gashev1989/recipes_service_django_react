@@ -1,4 +1,4 @@
-name: Foodgram-app workflow
+name: Django-app workflow
 
 on: [push]
 
@@ -14,15 +14,15 @@ jobs:
         python-version: 3.9
 
     - name: Install dependencies
-      run: | 
+      run: |
+        # обновление pip
         python -m pip install --upgrade pip
         pip install flake8
-        cd backend/
-        pip install -r requirements.txt 
+        pip install -r backend/requirements.txt
     - name: Test with flake8 and django tests
       run: |
         python -m flake8
-  
+        pytest
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
@@ -33,34 +33,35 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Login to Docker
-        uses: docker/login-action@v1
+        uses: docker/login-action@v1 
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Push to Docker Hub
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v2 
         with:
-          context: backend
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/backend
-  
+          tags: ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
+          context: ./backend
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
-    if: github.ref == 'refs/heads/master'
+    if: contains('
+      refs/heads/master
+      refs/heads/main',
+      github.ref)
     steps:
-      - name: executing remote ssh commands to deploy
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.PASSPHRASE }}
-          script: |
+    - name: executing remote ssh commands to deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.PASSPHRASE }}
+        script: |
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
             sudo docker-compose stop
-            sudo docker-compose rm backend
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/backend
+            sudo docker-compose rm web
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
@@ -69,14 +70,13 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             sudo docker-compose up -d
-
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-      - name: send message
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: ${{ github.workflow }} успешно выполнен!
+    - name: send message
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: ${{ github.workflow }} успешно выполнен!
