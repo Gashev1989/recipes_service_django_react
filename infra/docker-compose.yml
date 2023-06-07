@@ -12,8 +12,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
-  backend: 
-    build: ../backend #image: gashev1989/foodgram:latest
+  backend:
+    image: gashev1989/foodgram:latest
+#    build: ../backend
     restart: always
     volumes:
       - static_value:/app/static/
