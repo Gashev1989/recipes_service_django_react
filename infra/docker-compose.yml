@@ -7,9 +7,7 @@ services:
     env_file:
       - ./.env
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: gashev1989/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
   backend:
