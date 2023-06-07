@@ -13,7 +13,7 @@ services:
     volumes:
       - ../frontend/:/app/result_build/
   backend:
-    image: gashev1989/foodgram_backend:latest #    build: ../backend
+    image: gashev1989/foodgram_backend #    build: ../backend
     restart: always
     volumes:
       - static_value:/app/static/
