@@ -141,18 +141,30 @@ class RecipeViewSet(ModelViewSet):
     def download_shopping_cart(self, request):
         """"Загрузить список покупок."""
         user = request.user
-        components = Component.objects.filter(recipe__shop_cart__user=user)
-        ingredients = components.values(
-            'ingredient__name', 'ingredient__measurement_unit'
-        ).annotate(total_amount=Sum('amount'))
-        shopping_card = ['===Foodgram===\n']
-        for ingredient in ingredients:
-            shopping_card.append(
-                f"{ingredient['ingredient__name']} "
-                + f"{ingredient['total_amount']}"
-                + f"({ingredient['ingredient__measurement_unit']}) "
-                + '\n'
+        recipes = Recipe.objects.filter(users_shop_cart__user=user)
+        ingredients = Ingredient.objects.filter(
+            recipe__in=recipes).annotate(
+                total_amount=Sum('component__amount')
+        )
+        shopping_card = (f'===Foodgram===\n')
+        for ing in ingredients:
+            shopping_card += (
+                f'{ing.name}: {ing.total_amount} {ing.measurement_unit}\n'
             )
+        
+#        user = request.user
+#        components = Component.objects.filter(recipe__shop_cart__user=user)
+#        ingredients = components.values(
+#            'ingredient__name', 'ingredient__measurement_unit'
+#        ).annotate(total_amount=Sum('amount'))
+#        shopping_card = ['===Foodgram===\n']
+#        for ingredient in ingredients:
+#            shopping_card.append(
+#                f"{ingredient['ingredient__name']} "
+#                + f"{ingredient['total_amount']}"
+#                + f"({ingredient['ingredient__measurement_unit']}) "
+#                + '\n'
+#            )
         file_name = 'shopping_list.txt'
         response = HttpResponse(shopping_card, content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename={file_name}'
