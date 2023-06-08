@@ -141,27 +141,18 @@ class RecipeViewSet(ModelViewSet):
     def download_shopping_cart(self, request):
         """"Загрузить список покупок."""
         user = request.user
-#        components = Component.objects.filter(recipe__shop_cart__user=user)
-#        ingredients = components.values(
-#            'ingredient__name',
-#            'ingredient__amount',
-#            'ingredient__measurement_unit'
-#        ).annotate(total_amount=Sum('ingredient__amount'))
-        ingredients = Component.objects.filter(
-            recipe__shop_cart__user=user).values(
-            'component').annotate(total_amount=Sum('amount'))
+        components = Component.objects.filter(recipe__shop_cart__user=user)
+        ingredients = components.values(
+            'ingredient__name', 'ingredient__measurement_unit'
+        ).annotate(amount=Sum('ingredient__amount'))
         shopping_card = ('===Foodgram===\n')
-        for item in ingredients:
+        for ingredient in ingredients:
             shopping_card += (
-                f'{item.name}: {item.total_amount} {item.measurement_unit}\n'
+                f"{ingredient['ingredient__name']} "
+                + f"{ingredient['amount']}"
+                + f"({ingredient['ingredient__measurement_unit']}) "
+                + '\n'
             )
-#        for ingredient in ingredients:
-#            shopping_card += (
-#                f"{ingredient['ingredient__name']} "
-#                + f"{ingredient['total_amount']}"
-#                + f"({ingredient['ingredient__measurement_unit']}) "
-#                + '\n'
-#            )
         file_name = 'shopping_list.txt'
         response = HttpResponse(shopping_card, content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename={file_name}'
