@@ -137,10 +137,14 @@ REST_FRAMEWORK = {
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
+    'PASSWORD_RESET_CONFIRM_URL': 'set_password/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
     'HIDE_USERS': False,
     'PERMISSIONS': {
+        'password_reset_confirm': ['rest_framework.permissions.AllowAny'],
         'recipe': ['api.permissions.IsAdminIsAuthorOrReadOnly'],
         'recipe_list': ['api.permissions.IsAdminIsAuthorOrReadOnly'],
+        'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
         'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
         'user_list': ['rest_framework.permissions.AllowAny'],
         'create_user': ['rest_framework.permissions.AllowAny']

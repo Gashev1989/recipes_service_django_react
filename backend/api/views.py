@@ -170,6 +170,17 @@ class UsersViewSet(UserViewSet):
     permission_classes = (AllowAny,)
     add_serializer = SubscribeSerializer
 
+    @action(methods=['get'],
+            permission_classes=(IsAuthenticated,),
+            pagination_class=None)
+    def me(self, request):
+        """Показать профиль текущего пользователя."""
+        serializer = UserSerializer(
+            request.user,
+            context={'request': request}
+        )
+        return Response(serializer.data)
+
     @action(methods=['get'], detail=False,
             permission_classes=(IsAuthenticated,),
             pagination_class=PagePagination)
