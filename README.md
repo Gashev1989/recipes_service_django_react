@@ -64,13 +64,7 @@ docker-compose exec backend python manage.py collectstatic --no-input
 docker-compose exec backend python manage.py load_data
 ```
 
-6. Открыть документацию проекта:
-
-```
-http://127.0.0.1/api/docs/
-```
-
-7. Перед началом работы через админку Django создать необходимые теги.
+6. Перед началом работы через админку Django создать необходимые теги.
 ```
 http://127.0.0.1/admin/
 ```
