@@ -143,7 +143,7 @@ class RecipeViewSet(ModelViewSet):
         user = request.user
         components = Component.objects.filter(recipe__shop_cart__user=user)
         ingredients = components.values(
-            'ingredient__name', 'ingredient__measurement_unit'
+            'ingredient__name', 'ingredient__amount', 'ingredient__measurement_unit'
         ).annotate(total_amount=Sum('ingredient__amount'))
         shopping_card = ('===Foodgram===\n')
         for ingredient in ingredients:
