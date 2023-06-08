@@ -129,7 +129,8 @@ class RecipeSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
     ingredients = ComponentSerializer(many=True, source='components')
-    image = Base64ImageField(required=True, allow_null=False)
+    image = serializers.SerializerMethodField()
+#    image = Base64ImageField(required=True, allow_null=False)
 
     class Meta:
         model = Recipe
@@ -157,6 +158,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         if user.is_authenticated:
             return obj.shop_cart.filter(user=user).exists()
         return False
+    
+    def get_image(self, obj):
+        return obj.image.url
 
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
@@ -224,6 +228,8 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
 class RecipeShortSerializer(serializers.ModelSerializer):
     """Сериалайзер для рецепта в избранном, подписке, списке покупок."""
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = Recipe
         fields = (
@@ -232,6 +238,9 @@ class RecipeShortSerializer(serializers.ModelSerializer):
             'image',
             'cooking_time'
         )
+    
+    def get_image(self, obj):
+        return obj.image.url
 
 
 class SubscribeSerializer(serializers.ModelSerializer):
