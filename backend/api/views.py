@@ -1,4 +1,3 @@
-# from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -11,8 +10,6 @@ from rest_framework.permissions import (SAFE_METHODS, AllowAny,
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-# from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
-#                            ShoppingCart, Tag)
 from recipes.models import (Component, FavoriteRecipe, Ingredient, Recipe,
                             ShoppingCart, Tag)
 from users.models import Subscribe, User
@@ -142,73 +139,26 @@ class RecipeViewSet(ModelViewSet):
             pagination_class=None)
     def download_shopping_cart(self, request):
         """"Загрузить список покупок."""
-#        user = request.user
-#        recipes = Recipe.objects.filter(shop_cart__user=user)
-#        ingredients = Ingredient.objects.filter(
-#            recipe__in=recipes).annotate(
-#                total_amount=Sum('amount')
-#        )
-#        shopping_card = ('===Foodgram===\n')
-#        for ing in ingredients:
-#            shopping_card += (
-#                f'{ing.name}: {ing.total_amount} {ing.measurement_unit}\n'
-#            )
-
-#        user = request.user
-#        components = Component.objects.filter(recipe__shop_cart__user=user)
-#        ingredients = components.values(
-#            'ingredient__name', 'ingredient__measurement_unit'
-#        ).annotate(total_amount=Sum('amount'))
-#        shopping_card = ('===Foodgram===\n')
-#        for ingredient in ingredients:
-#            shopping_card.append(
-#                f"{ingredient['ingredient__name']} "
-#                + f"{ingredient['total_amount']}"
-#                + f"({ingredient['ingredient__measurement_unit']}) "
-#                + '\n'
-#            )
-#        for ing in ingredients:
-#            shopping_card += (
-#                f'{ing.name}: {ing.total_amount} {ing.measurement_unit}\n'
-#            )
-#        ingredients = (
-#            Component.objects
-#            .filter(recipe__shop_cart__user=request.user)
-#            .values('ingredient')
-#            .annotate(total_amount=Sum('amount'))
-#            .values_list('ingredient__name', 'total_amount',
-#                         'ingredient__measurement_unit')
-#        )
-#        shop_list = []
-#        [shop_list.append(
-#            '{} - {} {}.'.format(*ingredient)) for ingredient in ingredients]
-#        file_name = 'shopping_list.txt'
-#        response = HttpResponse(
-#            '===Foodgram===\n' + '\n'.join(shop_list),
-#            content_type='text/plain'
-#        )
-
-        shopping_list = {}
-        ingredients = Component.objects.filter(
-            recipe__shop_cart__user=request.user
-        )
+        user = request.user
+        shopping_card = {}
+        ingredients = Component.objects.filter(recipe__shop_cart__user=user)
         for ingredient in ingredients:
             amount = ingredient.amount
             name = ingredient.ingredient.name
             measurement_unit = ingredient.ingredient.measurement_unit
-            if name not in shopping_list:
-                shopping_list[name] = {
+            if name not in shopping_card:
+                shopping_card[name] = {
                     'measurement_unit': measurement_unit,
                     'amount': amount
                 }
             else:
-                shopping_list[name]['amount'] += amount
-        shop_list = ([f"* {item}:{value['amount']}"
-                      f"{value['measurement_unit']}\n"
-                      for item, value in shopping_list.items()])
-        shop_list.append('\n ===Made by FoodGram===')
+                shopping_card[name]['amount'] += amount
+        shopping_card.append('\n ===FoodGram===')
+        for item, value in shopping_card.items():
+            shopping_card += (f"- {item} : {value['amount']} "
+                              f"{value['measurement_unit']}\n")
         file_name = 'shopping_list.txt'
-        response = HttpResponse(shop_list, 'Content-Type: text/plain')
+        response = HttpResponse(shopping_card, 'Content-Type: text/plain')
         response['Content-Disposition'] = f'attachment; filename={file_name}'
         return response
 
