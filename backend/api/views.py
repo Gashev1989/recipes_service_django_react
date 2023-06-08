@@ -11,8 +11,10 @@ from rest_framework.permissions import (SAFE_METHODS, AllowAny,
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from recipes.models import (Component, FavoriteRecipe, Ingredient, Recipe,
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
                             ShoppingCart, Tag)
+# from recipes.models import (Component, FavoriteRecipe, Ingredient, Recipe,
+#                            ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 from .filters import RecipeFilter
@@ -146,12 +148,12 @@ class RecipeViewSet(ModelViewSet):
             recipe__in=recipes).annotate(
                 total_amount=Sum('component__amount')
         )
-        shopping_card = (f'===Foodgram===\n')
+        shopping_card = ('===Foodgram===\n')
         for ing in ingredients:
             shopping_card += (
                 f'{ing.name}: {ing.total_amount} {ing.measurement_unit}\n'
             )
-        
+
 #        user = request.user
 #        components = Component.objects.filter(recipe__shop_cart__user=user)
 #        ingredients = components.values(
