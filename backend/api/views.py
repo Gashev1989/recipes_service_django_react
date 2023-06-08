@@ -154,12 +154,12 @@ class RecipeViewSet(ModelViewSet):
 #                f'{ing.name}: {ing.total_amount} {ing.measurement_unit}\n'
 #            )
 
-        user = request.user
-        components = Component.objects.filter(recipe__shop_cart__user=user)
-        ingredients = components.values(
-            'ingredient__name', 'ingredient__measurement_unit'
-        ).annotate(total_amount=Sum('amount'))
-        shopping_card = ('===Foodgram===\n')
+#        user = request.user
+#        components = Component.objects.filter(recipe__shop_cart__user=user)
+#        ingredients = components.values(
+#            'ingredient__name', 'ingredient__measurement_unit'
+#        ).annotate(total_amount=Sum('amount'))
+#        shopping_card = ('===Foodgram===\n')
 #        for ingredient in ingredients:
 #            shopping_card.append(
 #                f"{ingredient['ingredient__name']} "
@@ -167,12 +167,25 @@ class RecipeViewSet(ModelViewSet):
 #                + f"({ingredient['ingredient__measurement_unit']}) "
 #                + '\n'
 #            )
-        for ing in ingredients:
-            shopping_card += (
-                f'{ing.name}: {ing.total_amount} {ing.measurement_unit}\n'
-            )
+#        for ing in ingredients:
+#            shopping_card += (
+#                f'{ing.name}: {ing.total_amount} {ing.measurement_unit}\n'
+#            )
+        ingredients = (
+            Component.objects
+            .filter(recipe__shop_cart__user=request.user)
+            .values('ingredient')
+            .annotate(total_amount=Sum('amount'))
+            .values_list('ingredient__name', 'total_amount',
+                         'ingredient__measurement_unit')
+        )
+        shop_list = []
+        [shop_list.append(
+            '{} - {} {}.'.format(*ingredient)) for ingredient in ingredients]
         file_name = 'shopping_list.txt'
-        response = HttpResponse(shopping_card, content_type='text/plain')
+        response = HttpResponse(
+            '===Foodgram===\n' + '\n'.join(shop_list), content_type='text/plain'
+        )
         response['Content-Disposition'] = f'attachment; filename={file_name}'
         return response
 
