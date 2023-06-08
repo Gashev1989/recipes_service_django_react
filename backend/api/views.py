@@ -147,22 +147,21 @@ class RecipeViewSet(ModelViewSet):
 #            'ingredient__amount',
 #            'ingredient__measurement_unit'
 #        ).annotate(total_amount=Sum('ingredient__amount'))
-        ingredients = (
-            Component.objects
-            .filter(recipe__shop_cart__user=user)
-            .values('ingredient')
-            .annotate(total_amount=Sum('amount'))
-            .values_list('ingredient__name', 'total_amount',
-                         'ingredient__measurement_unit')
-        )
+        ingredients = Component.objects.filter(
+            recipe__shop_cart__user=user).values(
+            'component').annotate(total_amount=Sum('amount'))
         shopping_card = ('===Foodgram===\n')
-        for ingredient in ingredients:
+        for item in ingredients:
             shopping_card += (
-                f"{ingredient['ingredient__name']} "
-                + f"{ingredient['total_amount']}"
-                + f"({ingredient['ingredient__measurement_unit']}) "
-                + '\n'
+                f'{item.name}: {item.total_amount} {item.measurement_unit}\n'
             )
+#        for ingredient in ingredients:
+#            shopping_card += (
+#                f"{ingredient['ingredient__name']} "
+#                + f"{ingredient['total_amount']}"
+#                + f"({ingredient['ingredient__measurement_unit']}) "
+#                + '\n'
+#            )
         file_name = 'shopping_list.txt'
         response = HttpResponse(shopping_card, content_type='text/plain')
         response['Content-Disposition'] = f'attachment; filename={file_name}'
