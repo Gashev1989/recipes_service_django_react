@@ -158,7 +158,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         if user.is_authenticated:
             return obj.shop_cart.filter(user=user).exists()
         return False
-    
+
     def get_image(self, obj):
         return obj.image.url
 
@@ -238,7 +238,7 @@ class RecipeShortSerializer(serializers.ModelSerializer):
             'image',
             'cooking_time'
         )
-    
+
     def get_image(self, obj):
         return obj.image.url
 
