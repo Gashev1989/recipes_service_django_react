@@ -11,10 +11,10 @@ from rest_framework.permissions import (SAFE_METHODS, AllowAny,
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
-                            ShoppingCart, Tag)
-# from recipes.models import (Component, FavoriteRecipe, Ingredient, Recipe,
+# from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
 #                            ShoppingCart, Tag)
+from recipes.models import (Component, FavoriteRecipe, Ingredient, Recipe,
+                            ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 from .filters import RecipeFilter
@@ -144,9 +144,9 @@ class RecipeViewSet(ModelViewSet):
         """"Загрузить список покупок."""
         user = request.user
         recipes = Recipe.objects.filter(users_shop_cart__user=user)
-        ingredients = Ingredient.objects.filter(
+        ingredients = Component.objects.filter(
             recipe__in=recipes).annotate(
-                total_amount=Sum('component__amount')
+                total_amount=Sum('amount')
         )
         shopping_card = ('===Foodgram===\n')
         for ing in ingredients:
