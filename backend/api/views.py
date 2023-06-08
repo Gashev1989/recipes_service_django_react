@@ -140,7 +140,7 @@ class RecipeViewSet(ModelViewSet):
     @action(methods=['get'], detail=False,
             permission_classes=[IsAuthenticated],
             pagination_class=None)
-    def download_shopping_cart(self, request, **kwargs):
+    def download_shopping_cart(self, request):
         """"Загрузить список покупок."""
 #        user = request.user
 #        recipes = Recipe.objects.filter(shop_cart__user=user)
