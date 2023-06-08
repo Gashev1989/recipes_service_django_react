@@ -141,12 +141,20 @@ class RecipeViewSet(ModelViewSet):
     def download_shopping_cart(self, request):
         """"Загрузить список покупок."""
         user = request.user
-        components = Component.objects.filter(recipe__shop_cart__user=user)
-        ingredients = components.values(
-            'ingredient__name',
-            'ingredient__amount',
-            'ingredient__measurement_unit'
-        ).annotate(total_amount=Sum('ingredient__amount'))
+#        components = Component.objects.filter(recipe__shop_cart__user=user)
+#        ingredients = components.values(
+#            'ingredient__name',
+#            'ingredient__amount',
+#            'ingredient__measurement_unit'
+#        ).annotate(total_amount=Sum('ingredient__amount'))
+        ingredients = (
+            Component.objects
+            .filter(recipe__shop_cart__user=user)
+            .values('ingredient')
+            .annotate(total_amount=Sum('amount'))
+            .values_list('ingredient__name', 'total_amount',
+                         'ingredient__measurement_unit')
+        )
         shopping_card = ('===Foodgram===\n')
         for ingredient in ingredients:
             shopping_card += (
