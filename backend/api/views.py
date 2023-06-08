@@ -170,7 +170,7 @@ class UsersViewSet(UserViewSet):
     permission_classes = (AllowAny,)
     add_serializer = SubscribeSerializer
 
-    @action(methods=['get'],
+    @action(methods=['get'], detail=False,
             permission_classes=(IsAuthenticated,),
             pagination_class=None)
     def me(self, request):
