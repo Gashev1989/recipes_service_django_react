@@ -129,6 +129,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
     ingredients = ComponentSerializer(many=True, source='components')
+    image = Base64ImageField(required=True, allow_null=False)
 
     class Meta:
         model = Recipe
