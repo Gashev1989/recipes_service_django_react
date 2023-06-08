@@ -184,7 +184,8 @@ class RecipeViewSet(ModelViewSet):
             '{} - {} {}.'.format(*ingredient)) for ingredient in ingredients]
         file_name = 'shopping_list.txt'
         response = HttpResponse(
-            '===Foodgram===\n' + '\n'.join(shop_list), content_type='text/plain'
+            '===Foodgram===\n' + '\n'.join(shop_list),
+            content_type='text/plain'
         )
         response['Content-Disposition'] = f'attachment; filename={file_name}'
         return response
