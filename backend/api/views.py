@@ -153,10 +153,10 @@ class RecipeViewSet(ModelViewSet):
                 }
             else:
                 shopping_card[name]['amount'] += amount
+        shopping_card = ([f"* {item}:{value['amount']}"
+                          f"{value['measurement_unit']}\n"
+                         for item, value in shopping_card.items()])
         shopping_card.append('\n ===FoodGram===')
-        for item, value in shopping_card.items():
-            shopping_card += (f"- {item} : {value['amount']} "
-                              f"{value['measurement_unit']}\n")
         file_name = 'shopping_list.txt'
         response = HttpResponse(shopping_card, 'Content-Type: text/plain')
         response['Content-Disposition'] = f'attachment; filename={file_name}'
