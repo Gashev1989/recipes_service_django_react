@@ -145,7 +145,7 @@ class RecipeViewSet(ModelViewSet):
         ingredients = components.values(
             'ingredient__name', 'ingredient__measurement_unit'
         ).annotate(total_amount=Sum('amount'))
-        shopping_card = ('===Foodgram===\n')
+        shopping_card = ['===Foodgram===\n']
         for ingredient in ingredients:
             shopping_card += (
                 f"{ingredient['ingredient__name']} "
