@@ -32,8 +32,8 @@ class UserSerializer(UserSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def get_is_subscribed(self, obj):
-        user = self.context.get('request').user
-        if user.is_authenticated:
+        user = self.context.get("request").user
+        if user.is_authenticated and user.username != obj.username:
             return obj.subscriber.filter(user=user).exists()
         return False
 
@@ -116,7 +116,7 @@ class ComponentCreateSerializer(serializers.ModelSerializer):
         )
 
     def validate_amount(self, value):
-        if MIN_VALUE <= value >= MAX_VALUE:
+        if MIN_VALUE >= value >= MAX_VALUE:
             raise serializers.ValidationError(
                 'Значение количества должно быть от 1 до 32000.')
         return value
@@ -183,6 +183,22 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             'cooking_time',
             'image'
         )
+        
+    def validate_ingredients(self, value):
+        if not value:
+            raise serializers.ValidationError(
+                'В рецепте не указано ни одного ингредиента.')
+        ingredients_set = set()
+        for items in value:
+            if not Ingredient.objects.filter(id=items['id']).exists():
+                raise serializers.ValidationError(
+                    'Ингредиент не найден в базе данных.')
+            ingredient = Ingredient.objects.get(id=items['id'])
+            if ingredient in ingredients_set:
+                raise serializers.ValidationError(
+                    'Ингредиенты в рецепте повторяются.')
+            ingredients_set.add(ingredient)
+        return value
 
     def tags_and_ingredients_set(self, recipe, tags, ingredients):
         recipe.tags.set(tags)
