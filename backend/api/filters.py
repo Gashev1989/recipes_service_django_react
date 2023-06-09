@@ -1,6 +1,15 @@
 from django_filters.rest_framework import FilterSet, filters
-from recipes.models import Recipe, Tag
+from recipes.models import Ingredient, Recipe, Tag
 from users.models import User
+
+
+class IngredientFilter(FilterSet):
+    """Фильтр ингредиентов по названию."""
+    name = filters.CharFilter(field_name='name', lookup_expr='icontains')
+
+    class Meta:
+        model = Ingredient
+        fields = ('name',)
 
 
 class RecipeFilter(FilterSet):
