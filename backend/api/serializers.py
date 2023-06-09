@@ -183,7 +183,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             'cooking_time',
             'image'
         )
-        
+
     def validate_ingredients(self, value):
         if not value:
             raise serializers.ValidationError(
