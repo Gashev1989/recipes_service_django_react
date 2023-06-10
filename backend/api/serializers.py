@@ -186,16 +186,8 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
-        if not ingredients:
-            raise serializers.ValidationError(
-                'В рецепте не указано ни одного ингредиента.')
         ingredient_set = set()
         for ingredient in ingredients:
-            """
-            if not Ingredient.objects.filter(id=ingredient['id']).exists():
-                raise serializers.ValidationError(
-                    'Ингредиент не найден в базе данных.')
-            """
             if ingredient['id'] in ingredient_set:
                 raise serializers.ValidationError(
                     'Ингредиенты в рецепте повторяются.'
