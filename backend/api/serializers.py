@@ -194,15 +194,11 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             if not Ingredient.objects.filter(id=ingredient['id']).exists():
                 raise serializers.ValidationError(
                     'Ингредиент не найден в базе данных.')
-            if int(ingredient['id']) in ingredient_set:
+            if ingredient['id'] in ingredient_set:
                 raise serializers.ValidationError(
                     'Ингредиенты в рецепте повторяются.'
                 )
             ingredient_set.add(ingredient['id'])
-            if int(ingredient['amount']) < MIN_VALUE:
-                raise serializers.ValidationError(
-                    'Минимальное количество ингредиента равно 1.'
-                )
         return data
 
     def tags_and_ingredients_set(self, recipe, tags, ingredients):
