@@ -116,7 +116,7 @@ class ComponentCreateSerializer(serializers.ModelSerializer):
         )
 
     def validate_amount(self, value):
-        if MIN_VALUE <= value >= MAX_VALUE:
+        if MIN_VALUE > value or value > MAX_VALUE:
             raise serializers.ValidationError(
                 'Значение количества должно быть от 1 до 32000.')
         return value
@@ -199,8 +199,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
                     'Ингредиенты в рецепте повторяются.'
                 )
             ingredient_set.add(ingredient['id'])
-
-            if int(ingredient['amount']) <= 0:
+            if int(ingredient['amount']) < MIN_VALUE:
                 raise serializers.ValidationError(
                     'Минимальное количество ингредиента равно 1.'
                 )
