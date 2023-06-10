@@ -300,7 +300,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
             UniqueTogetherValidator(
                 queryset=Subscribe.objects.all(),
                 fields=('user', 'author'),
-                message='Вы уже подписались на автора.'
+                message='Вы уже подписались на этого автора.'
             )
         ]
 
