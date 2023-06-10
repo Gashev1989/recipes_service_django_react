@@ -184,21 +184,27 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             'image'
         )
 
-    def validate_ingredients(self, value):
-        if not value:
+    def validate(self, data):
+        ingredients = self.initial_data.get('ingredients')
+        if not ingredients:
             raise serializers.ValidationError(
                 'В рецепте не указано ни одного ингредиента.')
-        for items in value:
-            if not Ingredient.objects.filter(id=items['id']).exists():
+        ingredient_set = set()
+        for ingredient in ingredients:
+            if not Ingredient.objects.filter(id=ingredient['id']).exists():
                 raise serializers.ValidationError(
                     'Ингредиент не найден в базе данных.')
-            ingredient = Ingredient.objects.get(id=items['id'])
-            ingredients_set = set()
-            if ingredient in ingredients_set:
+            if int(ingredient['id']) in ingredient_set:
                 raise serializers.ValidationError(
-                    'Ингредиенты в рецепте повторяются.')
-            ingredients_set.add(ingredient)
-        return value
+                    'Ингредиенты в рецепте повторяются.'
+                )
+            ingredient_set.add(ingredient['id'])
+
+            if int(ingredient['amount']) <= 0:
+                raise serializers.ValidationError(
+                    'Минимальное количество ингредиента равно 1.'
+                )
+        return data
 
     def tags_and_ingredients_set(self, recipe, tags, ingredients):
         recipe.tags.set(tags)
