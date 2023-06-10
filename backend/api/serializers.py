@@ -32,8 +32,8 @@ class UserSerializer(UserSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def get_is_subscribed(self, obj):
-        user = self.context.get("request").user
-        if user.is_authenticated and user.username != obj.username:
+        user = self.context.get('request').user
+        if user.is_authenticated:
             return obj.subscriber.filter(user=user).exists()
         return False
 
