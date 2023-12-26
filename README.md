@@ -1,5 +1,5 @@
 # Cайт Foodgram - «Продуктовый помощник».
-![yamdb_workflow.yml](https://github.com/Gashev1989/foodgram-project-react/actions/workflows/main.yml/badge.svg)
+![yamdb_workflow.yml](https://github.com/Gashev1989/foodgram-project-react/actions/workflows/main.yml/badge.svg) - в настоящее время у меня нет сервера для деплоя проекта
 ### Описание
 На этом сервисе пользователи могут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
 
